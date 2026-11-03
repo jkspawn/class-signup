@@ -30,10 +30,10 @@ async function ClassCard() {
 
   if (error) {
     console.error("load class failed:", error);
-    return <p className="text-rose-700">클래스 정보를 불러오지 못했습니다.</p>;
+    return <p className="text-red">클래스 정보를 불러오지 못했어요. 새로고침해 주세요.</p>;
   }
   if (!data) {
-    return <p>등록된 클래스가 없습니다.</p>;
+    return <p className="text-ink-soft">아직 열린 클래스가 없어요.</p>;
   }
 
   const taken = data.signups[0]?.count ?? 0;
@@ -53,9 +53,9 @@ async function ClassCard() {
 
 export default function Home() {
   return (
-    <main className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-black">
-      <section className="flex w-full max-w-md flex-col gap-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-        <Suspense fallback={<p className="text-zinc-500">불러오는 중…</p>}>
+    <main className="flex flex-1 items-start justify-center px-4 py-10 sm:items-center sm:py-16">
+      <section className="flex w-full max-w-[26rem] flex-col gap-8 rounded-[3px] bg-sheet px-6 pt-9 pb-6 shadow-[0_1px_0_var(--line),0_14px_32px_-26px_rgba(40,48,65,0.4)] sm:px-9">
+        <Suspense fallback={<p className="text-ink-soft">자리를 세는 중…</p>}>
           <ClassCard />
         </Suspense>
       </section>

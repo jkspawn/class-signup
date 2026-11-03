@@ -14,10 +14,10 @@ const EXAMPLE = {
 
 export default function DemoPage() {
   return (
-    <main className="flex flex-1 items-center justify-center bg-zinc-50 px-4 py-12 dark:bg-black">
-      <section className="flex w-full max-w-md flex-col gap-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-        <p className="-mb-2 text-xs font-medium text-amber-700 dark:text-amber-400">
-          예시 화면 · 신청 내용은 저장되지 않습니다
+    <main className="flex flex-1 items-start justify-center px-4 py-10 sm:items-center sm:py-16">
+      <section className="flex w-full max-w-[26rem] flex-col gap-8 rounded-[3px] bg-sheet px-6 pt-9 pb-6 shadow-[0_1px_0_var(--line),0_14px_32px_-26px_rgba(40,48,65,0.4)] sm:px-9">
+        <p className="-mt-4 -mb-4 text-sm text-ink-soft">
+          예시 화면이에요. 신청해도 저장되지 않아요.
         </p>
         <ClassInfo {...EXAMPLE} />
         <SignupForm classId="demo" closed={false} demo />

@@ -22,7 +22,7 @@ export async function apply(
     return { status: "error", message: "잘못된 요청입니다." };
   }
   if (name.length < 1 || name.length > 30) {
-    return { status: "error", message: "이름을 1~30자로 입력해 주세요." };
+    return { status: "error", message: "이름은 1~30자로 적어 주세요." };
   }
 
   // 정원 확인과 저장은 DB 함수 안에서 잠금과 함께 한 번에 처리한다.
@@ -35,7 +35,7 @@ export async function apply(
     console.error("apply_to_class failed:", error);
     return {
       status: "error",
-      message: "신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+      message: "신청을 저장하지 못했어요. 잠시 뒤 다시 눌러 주세요.",
     };
   }
 
@@ -43,10 +43,10 @@ export async function apply(
   refresh(); // 남은 자리 / 마감 표시를 최신으로
 
   if (result.ok) {
-    return { status: "success", message: `${name}님, 신청이 완료되었습니다!` };
+    return { status: "success", message: `${name}님, 신청했어요. 클래스에서 만나요!` };
   }
   if (result.reason === "full") {
-    return { status: "full", message: "아쉽게도 정원이 마감되었습니다." };
+    return { status: "full", message: "방금 자리가 모두 찼어요. 신청되지 않았어요." };
   }
-  return { status: "error", message: "클래스를 찾을 수 없습니다." };
+  return { status: "error", message: "이 클래스를 찾을 수 없어요. 새로고침해 주세요." };
 }

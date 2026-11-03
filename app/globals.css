@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
+/* 도화지와 연필: 푸른 회색 색지 위에 흰 도화지 한 장 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --paper: #dde5e8; /* 색지 */
+  --sheet: #f7f9f8; /* 도화지 */
+  --ink: #283041; /* 흑연 */
+  --ink-soft: #5d6675; /* 연한 연필 */
+  --line: #9aa6b2; /* 밑그림 선 */
+  --pencil: #e6cf8f; /* 연한 노란 색연필 */
+  --leaf: #3f7d5c; /* 초록 색연필 (완료) */
+  --red: #a8505a; /* 빨간 색연필 (마감·오류) */
 }
 
 @media (prefers-color-scheme: dark) {
+  /* 검은 종이 위 흰 연필 */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper: #151a22;
+    --sheet: #1e2531;
+    --ink: #e9ece6;
+    --ink-soft: #a3acb8;
+    --line: #56606e;
+    --pencil: #cdb57a;
+    --leaf: #7cc49b;
+    --red: #d98a92;
   }
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-sheet: var(--sheet);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-pencil: var(--pencil);
+  --color-leaf: var(--leaf);
+  --color-red: var(--red);
+  --font-hand: var(--font-hand);
+  --font-body: var(--font-body);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), sans-serif;
+  word-break: keep-all; /* 한국어를 단어 중간에서 끊지 않기 */
+}
+
+/* 손으로 그린 듯 고르지 않은 테두리 */
+.hand-edge {
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+}
+
+/* 남은 자리: 찬 자리의 빗금이 처음 한 번 그려진다 */
+.hatch line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 320ms ease-out forwards;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hatch line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+:focus-visible {
+  outline: 2px dashed var(--ink);
+  outline-offset: 3px;
 }
