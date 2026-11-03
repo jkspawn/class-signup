@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { getSupabase } from "@/lib/supabase-server";
+import { ClassInfo } from "./ClassInfo";
 import { SignupForm } from "./SignupForm";
 
 type ClassRow = {
@@ -36,36 +37,16 @@ async function ClassCard() {
   }
 
   const taken = data.signups[0]?.count ?? 0;
-  const remaining = Math.max(data.capacity - taken, 0);
-  const closed = remaining === 0;
 
   return (
     <>
-      <div className="flex items-start justify-between gap-4">
-        <h1 className="text-2xl font-bold leading-snug">{data.title}</h1>
-        <span
-          className={`shrink-0 rounded-full px-3 py-1 text-sm font-semibold ${
-            closed
-              ? "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300"
-              : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
-          }`}
-        >
-          {closed ? "마감" : "모집 중"}
-        </span>
-      </div>
-
-      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-        <dt className="text-zinc-500">일시</dt>
-        <dd>{dateFmt.format(new Date(data.starts_at))}</dd>
-        <dt className="text-zinc-500">정원</dt>
-        <dd>{data.capacity}명</dd>
-        <dt className="text-zinc-500">남은 자리</dt>
-        <dd className="font-semibold">
-          {closed ? "0석 (마감)" : `${remaining}석`}
-        </dd>
-      </dl>
-
-      <SignupForm classId={data.id} closed={closed} />
+      <ClassInfo
+        title={data.title}
+        when={dateFmt.format(new Date(data.starts_at))}
+        capacity={data.capacity}
+        taken={taken}
+      />
+      <SignupForm classId={data.id} closed={taken >= data.capacity} />
     </>
   );
 }
