@@ -1,7 +1,8 @@
-// 마지막 한 자리 테스트: 정원 10 중 9자리가 찬 임시 클래스에 동시 신청 20건을 보낸다.
+// 마지막 한 자리 테스트: 정원 10 중 9자리가 찬 임시 클래스에 서로 다른 계정 20개가 동시에 신청한다.
 // 기대 결과: 딱 1건만 성공, 최종 인원 10 (정원 초과 없음). 끝나면 임시 클래스를 삭제한다.
 // 실행: node --env-file=.env.local scripts/last-seat-test.mjs
 import { createClient } from "@supabase/supabase-js";
+import { createTestUsers, deleteTestUsers } from "./test-users.mjs";
 
 const CAPACITY = 10;
 const PREFILLED = 9;
@@ -25,7 +26,10 @@ const { data: cls, error } = await db
   .single();
 if (error) throw error;
 
+let users = [];
 try {
+  users = await createTestUsers(db, ATTEMPTS, "last-seat");
+  // 미리 찬 자리는 계정 없이 넣는다 (로그인 기능 전 신청과 같은 모양, 정원에는 포함)
   const { error: preErr } = await db.from("signups").insert(
     Array.from({ length: PREFILLED }, (_, i) => ({ class_id: cls.id, name: `기존${i + 1}` })),
   );
@@ -35,9 +39,13 @@ try {
 
   // 2) 동시에 보내기
   const results = await Promise.all(
-    Array.from({ length: ATTEMPTS }, async (_, i) => {
+    users.map(async (u, i) => {
       const name = `동시${String(i + 1).padStart(2, "0")}`;
-      const { data, error } = await db.rpc("apply_to_class", { p_class_id: cls.id, p_name: name });
+      const { data, error } = await db.rpc("apply_to_class", {
+        p_class_id: cls.id,
+        p_user_id: u.id,
+        p_name: name,
+      });
       const outcome = error ? `오류(${error.message})` : data.ok ? "성공" : data.reason === "full" ? "마감" : data.reason;
       log(`  ${name} → ${outcome}`);
       return { name, outcome };
@@ -62,5 +70,6 @@ try {
   process.exitCode = pass ? 0 : 1;
 } finally {
   await db.from("classes").delete().eq("id", cls.id); // signups는 cascade로 함께 삭제
-  log("임시 클래스 삭제 완료");
+  await deleteTestUsers(db, users);
+  log("임시 클래스·테스트 계정 삭제 완료");
 }

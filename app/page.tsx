@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { getSupabase } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
+import { getAuthClient, getCurrentUser, getSupabase } from "@/lib/supabase-server";
+import { signOut } from "./login/actions";
+import { MySignup } from "./MySignup";
 import { ClassInfo } from "./ClassInfo";
 import { SignupForm } from "./SignupForm";
 
@@ -21,6 +24,34 @@ const dateFmt = new Intl.DateTimeFormat("ko-KR", {
 async function ClassCard() {
   await connection(); // 항상 요청 시점의 최신 신청 수를 보여준다
 
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  return (
+    <>
+      <UserBar email={user.email} />
+      <ClassDetails />
+    </>
+  );
+}
+
+function UserBar({ email }: { email: string }) {
+  return (
+    <div className="-mt-4 -mb-2 flex items-center justify-between gap-3 text-sm text-ink-soft">
+      <span className="min-w-0 truncate">{email}</span>
+      <form action={signOut}>
+        <button
+          type="submit"
+          className="shrink-0 underline decoration-line underline-offset-4 hover:text-ink"
+        >
+          로그아웃
+        </button>
+      </form>
+    </div>
+  );
+}
+
+async function ClassDetails() {
   const { data, error } = await getSupabase()
     .from("classes")
     .select("id, title, starts_at, capacity, signups(count)")
@@ -38,6 +69,14 @@ async function ClassCard() {
 
   const taken = data.signups[0]?.count ?? 0;
 
+  // 내 신청은 로그인한 사용자 권한으로 읽는다 (RLS: 자기 행만 보인다)
+  const { data: mine, error: mineError } = await (await getAuthClient())
+    .from("signups")
+    .select("id, name, created_at")
+    .eq("class_id", data.id)
+    .maybeSingle<{ id: string; name: string; created_at: string }>();
+  if (mineError) console.error("load my signup failed:", mineError);
+
   return (
     <>
       <ClassInfo
@@ -46,7 +85,15 @@ async function ClassCard() {
         capacity={data.capacity}
         taken={taken}
       />
-      <SignupForm classId={data.id} closed={taken >= data.capacity} />
+      {mine ? (
+        <MySignup
+          signupId={mine.id}
+          name={mine.name}
+          appliedAt={dateFmt.format(new Date(mine.created_at))}
+        />
+      ) : (
+        <SignupForm classId={data.id} closed={taken >= data.capacity} />
+      )}
     </>
   );
 }
