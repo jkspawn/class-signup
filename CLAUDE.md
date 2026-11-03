@@ -29,6 +29,7 @@
 - `proxy.ts` — 세션 쿠키 갱신, 비로그인 `/` → `/login` (Next 16에서 middleware 대신 proxy)
 - `app/login/` — 이메일·비밀번호 로그인/회원가입 화면과 액션, 로그아웃 액션
 - `app/auth/callback/route.ts` — 가입 확인 메일 링크 처리
+- `app/rls-check/` — 일반 사용자 권한 테스트 화면. 로그인 세션으로만 조회·취소 요청을 보낸다 (서버 키 금지, 토큰 출력 금지)
 - `app/page.tsx` — 클래스 정보·남은 자리·마감 표시 (서버 컴포넌트)
 - `app/SignupForm.tsx` — 이름 입력·신청 버튼 (클라이언트 컴포넌트)
 - `app/actions.ts` — 신청 Server Action

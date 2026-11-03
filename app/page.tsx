@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getAuthClient, getCurrentUser, getSupabase } from "@/lib/supabase-server";
 import { signOut } from "./login/actions";
 import { MySignup } from "./MySignup";
@@ -39,6 +40,12 @@ function UserBar({ email }: { email: string }) {
   return (
     <div className="-mt-4 -mb-2 flex items-center justify-between gap-3 text-sm text-ink-soft">
       <span className="min-w-0 truncate">{email}</span>
+      <Link
+        href="/rls-check"
+        className="ml-auto shrink-0 underline decoration-line underline-offset-4 hover:text-ink"
+      >
+        권한 테스트
+      </Link>
       <form action={signOut}>
         <button
           type="submit"
