@@ -52,5 +52,5 @@ grant execute on function apply_to_class(uuid, text) to service_role;
 
 -- 샘플 클래스 (원하는 값으로 수정)
 insert into classes (title, starts_at, capacity)
-select '핸드드립 커피 원데이 클래스', '2026-11-21 14:00:00+09', 10
+select '원데이 클래스', '2026-11-21 14:00:00+09', 10
 where not exists (select 1 from classes);

@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "원데이 클래스 신청 (예시)"
 
 // 저장 없이 예시 값으로만 채운 화면
 const EXAMPLE = {
-  title: "초보 손그림 원데이",
+  title: "원데이 클래스",
   when: "이번 주 토요일 14시",
   capacity: 10,
   taken: 3,
