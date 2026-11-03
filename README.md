@@ -1,5 +1,8 @@
 # 원데이 클래스 신청
 
+## 실행
+웹 주소: https://class-signup-pilz.vercel.app/
+
 Next.js(App Router) + Supabase(Postgres). 정원은 DB 함수 `apply_to_class`가 행 잠금(`SELECT … FOR UPDATE`)으로 지킵니다.
 
 ## 설정
